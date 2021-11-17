@@ -1,0 +1,43 @@
+version: "3"
+
+networks:
+  directus:
+
+services:
+  database:
+    container_name: database
+    image: mysql:latest
+    command: --default-authentication-plugin=mysql_native_password
+    environment:
+      MYSQL_DATABASE: "team7-directus"
+      MYSQL_ROOT_PASSWORD: "Cedteam7"
+    ports:
+      - "127.0.0.1:3303:3306"
+    networks:
+      - directus
+
+  directus:
+    container_name: directus
+    image: directus/directus:latest
+    ports:
+      - "8000:8055"
+    environment:
+      KEY: "255d861b-5ea1-5996-9aa3-922530ec40b1"
+      SECRET: "6116487b-cda1-52c2-b5b5-c8022c45e263"
+      DIRECTUS_APP_ENV: "production"
+      DB_CLIENT: "mysql"
+      DB_HOST: "database"
+      DB_PORT: "3306"
+      DB_DATABASE: "team7-directus"
+      DB_USER: "root"
+      DB_PASSWORD: "Cedteam7"
+
+      ADMIN_EMAIL: 'admin@email.com'
+      ADMIN_PASSWORD: 'Cedteam7'
+    volumes:
+      - ./data/config:/var/directus/config
+      - ./data/uploads:/var/directus/public/uploads
+    networks:
+      - directus
+    depends_on:
+      - database
